@@ -11,6 +11,7 @@ import Social
 
 class ViewController: UIViewController {
     let twitterBtn = UIButton.buttonWithType(.System) as UIButton
+    let lineBtn = UIButton.buttonWithType(.System) as UIButton
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +21,11 @@ class ViewController: UIViewController {
         self.twitterBtn.setTitle("Twitter", forState: .Normal)
         self.twitterBtn.addTarget(self, action: "pressBtn:", forControlEvents: .TouchUpInside)
         self.view.addSubview(self.twitterBtn)
+        
+        // line
+        self.lineBtn.setTitle("LINE", forState: .Normal)
+        self.lineBtn.addTarget(self, action: "pressBtn:", forControlEvents: .TouchUpInside)
+        self.view.addSubview(self.lineBtn)
         
         setupConstraints()
     }
@@ -34,7 +40,17 @@ class ViewController: UIViewController {
         twitterBtnConstraints.append(NSLayoutConstraint(item: self.twitterBtn, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 80.0))
         twitterBtnConstraints.append(NSLayoutConstraint(item: self.twitterBtn, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 40.0))
         viewConstraints.append(NSLayoutConstraint(item: self.twitterBtn, attribute: .Top, relatedBy: .Equal, toItem: self.view, attribute: .Top, multiplier: 1.0, constant: 40.0))
+        viewConstraints.append(NSLayoutConstraint(item: self.twitterBtn, attribute: .CenterX, relatedBy: .Equal, toItem: self.view, attribute: .CenterX, multiplier: 1.0, constant: -80.0))
         
+        // line
+        self.lineBtn.setTranslatesAutoresizingMaskIntoConstraints(false)
+        var lineBtnConstraints = [NSLayoutConstraint]()
+        lineBtnConstraints.append(NSLayoutConstraint(item: self.lineBtn, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 80.0))
+        lineBtnConstraints.append(NSLayoutConstraint(item: self.lineBtn, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 40.0))
+        viewConstraints.append(NSLayoutConstraint(item: self.lineBtn, attribute: .Top, relatedBy: .Equal, toItem: self.twitterBtn, attribute: .Bottom, multiplier: 1.0, constant: 40.0))
+        viewConstraints.append(NSLayoutConstraint(item: self.lineBtn, attribute: .CenterX, relatedBy: .Equal, toItem: self.view, attribute: .CenterX, multiplier: 1.0, constant: -80.0))
+        
+        self.lineBtn.addConstraints(lineBtnConstraints)
         self.twitterBtn.addConstraints(twitterBtnConstraints)
         self.view.addConstraints(viewConstraints)
         
@@ -48,6 +64,8 @@ class ViewController: UIViewController {
     func pressBtn(sender:UIButton){
         if sender.isEqual(self.twitterBtn){
             shareTwitter()
+        }else if sender.isEqual(self.lineBtn){
+            shareLINE()
         }
     }
     
@@ -64,6 +82,25 @@ class ViewController: UIViewController {
             }
         }
         self.presentViewController(controller, animated: true, completion: nil)
+    }
+    
+    private func shareLINE(){
+        var message:String? = "Happy Birthday!!!"
+        message = message!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+        
+        if message == nil{
+            return
+        }
+        
+        let LINEURLString = "line://msg/text/\(message!)"
+        if UIApplication.sharedApplication().canOpenURL(NSURL(string: LINEURLString)!){
+            // LINEがインストールされている
+            UIApplication.sharedApplication().openURL(NSURL(string: LINEURLString)!)
+        }else{
+            // LINEがインストールされていない
+            let alert = UIAlertView(title: "Error", message: "Can't open LINE", delegate: nil, cancelButtonTitle: nil, otherButtonTitles: "OK")
+            alert.show()
+        }
     }
 }
 
